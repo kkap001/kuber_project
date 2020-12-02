@@ -28,7 +28,7 @@ services:
              - 3306:3306
         environment:
             MYSQL_ROOT_USER: root
-            MYSQL_ROOT_PASSWORD: Bityrt4321
+            MYSQL_ROOT_PASSWORD: passwordhere
             MYSQL_USER: admin
             MYSQL_HOST: 0.0.0.0
             MYSQL_PASSWORD: admin 
