@@ -1,0 +1,22 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: redmine
+  annotations:
+     kubernetes.io/ingress.class: nginx
+     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+     cert-manager.io/cluster-issuer: "letsencrypt-production"
+
+spec:
+  tls:
+  - secretName: letsencrypt-production
+    hosts:
+    - redmine.domain.com
+  rules:
+  - host: redmine.domain.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: redmine
+          servicePort: 3002

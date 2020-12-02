@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redmine-site
+  labels:
+    app: web
+spec:
+ replicas: 2
+ selector:
+   matchLabels:
+     app: redmine
+  
+ template: 
+   metadata:
+      labels:
+        app: redmine     
+   spec:
+
+     volumes:
+      - name: redmine-code
+        hostPath:
+         path: /dockerprojects/dockercompose_project/redmine/redmine-new 
+     containers:
+      - name: redminekuber
+        image: pathtoimagerepo
+        volumeMounts:
+        - name: redmine-code
+          mountPath: /redmine
+        lifecycle:
+          postStart:
+            exec:
+              command: ["/bin/sh", "-c","cd /redmine && rails s -p 3002 -d -b 0.0.0.0"]
+     imagePullSecrets:
+      - name: regcred
+
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+  labels:
+    app: mysql
+spec:
+ replicas: 1
+ selector:
+   matchLabels:
+     app: mysql
+
+ template:
+   metadata:
+      labels:
+        app: mysql
+   spec:
+
+     volumes:
+      - name: mysql-persistent-storage
+        hostPath:
+         path: /dockerprojects/dockercompose_project/redmine/dbnewone
+     containers:
+      - name: mysqlredminekuber
+        image: mysql:latest
+        env:
+          # Use secret in real usage
+        - name: MYSQL_ROOT_PASSWORD
+          value: passwordhere
+        volumeMounts:
+        - name: mysql-persistent-storage
+          mountPath: /var/lib/mysql
+

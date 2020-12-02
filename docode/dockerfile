@@ -1,0 +1,28 @@
+FROM ubuntu:latest
+ENV OS_LOCALE="en_US.UTF-8"
+RUN apt-get update && apt-get install -y locales && locale-gen ${OS_LOCALE}
+ENV LANG=${OS_LOCALE} \
+    LANGUAGE=${OS_LOCALE} \
+    LC_ALL=${OS_LOCALE} \
+    DEBIAN_FRONTEND=noninteractive
+#RUN apt-get -y update && apt-get upgrade -y \
+#	 apache2 \ 
+#	curl \
+#        vim #\
+	# libapache2-mod-passenger 
+WORKDIR /redmine
+
+RUN  apt-get clean \
+       \
+        BUILD_DEPS='software-properties-common' \
+    && dpkg-reconfigure locales \
+        && apt-get update && apt-get install  --no-install-recommends -y software-properties-common \ 
+&& 	apt-get install  -y libz-dev libmysqlclient-dev libmagickwand-dev imagemagick autoconf git bison build-essential libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev  libgdbm-dev libiconv-hook1 libiconv-hook-dev ruby-dev ruby-full nodejs gcc g++ make curl apache2 vim libapache2-mod-passenger net-tools
+#RUN    gem install bundler 
+#RUN  gem install rails -v 5.2.0
+#RUN gem install bundler:1.16.6
+#RUN  gem install rmagick -v 2.16.0
+# Installing supervisor service and creating directories for copy supervisor configurations
+RUN apt-get -y install supervisor && mkdir -p /var/log/supervisor && mkdir -p /etc/supervisor/conf.d
+ADD supervisor.conf /etc/supervisor.conf
+CMD ["supervisord", "-c", "/etc/supervisor.conf"]   # starting supervisord service

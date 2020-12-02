@@ -1,0 +1,46 @@
+version: '3'
+services:
+    redmine:
+        image: redmine_newone
+        #        build:
+        #   context: ./docode
+        container_name: redmine
+        volumes:
+             - ./redmine-new:/redmine
+        ports:
+             - 3002:3002
+        networks:
+           redmine-nw:
+                ipv4_address: 172.29.2.5
+        restart: always
+
+    pmysql:
+        image: mysql:latest
+        container_name: pmysql
+        command: --default-authentication-plugin=mysql_native_password
+        networks:
+            redmine-nw:
+                ipv4_address: 172.29.2.8
+        restart: always
+        volumes:
+             - ./dbnewone:/var/lib/mysql/
+        ports:
+             - 3306:3306
+        environment:
+            MYSQL_ROOT_USER: root
+            MYSQL_ROOT_PASSWORD: Bityrt4321
+            MYSQL_USER: admin
+            MYSQL_HOST: 0.0.0.0
+            MYSQL_PASSWORD: admin 
+            #            MYSQL_DATABASE: redminenew
+
+networks:
+    redmine-nw:
+        ipam:
+            driver: default
+            config:
+                - subnet: 172.29.2.0/16
+            
+            #networks:
+            #     redmine-network:  
+            #           external: true
